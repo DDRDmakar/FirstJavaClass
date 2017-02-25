@@ -11,18 +11,16 @@ class TrainScheduleTest extends GroovyTestCase {
     // Get current date + some shift in time
     static Timestamp nowTimePlus(double hoursShift = 0) {
         return new Timestamp((System.currentTimeMillis() + 3600*hoursShift).toLong())
+        // 3600000 = 1 hour
     }
 
     void testShedule() {
-        // LocalDateTime.now()
-        // new Timestamp(System.currentTimeMillis())
-        // 3600000 = 1 hour
 
         // Новый объект "расписание поездов"
         TrainSchedule s = new TrainSchedule()
 
         // Вывод содержимого - должен быть пустым
-        println(s)
+        // println(s)
 
         // Заполнение содержимого
         s.addTrain("Sapsan", nowTimePlus(9), "Брянск")
@@ -114,6 +112,6 @@ class TrainScheduleTest extends GroovyTestCase {
         assertEquals("Sapsan", s.find_next_train_to("Тринадцатая", nowTimePlus()))
         assertEquals("Sapsan", s.find_next_train_to("Четырнадцатая", nowTimePlus()))
 
-        println(s)
+        // println(s)
     }
 }

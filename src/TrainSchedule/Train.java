@@ -17,7 +17,7 @@ public class Train {
     private String destination;
     private Vector<String> intermediateStationStorage;
 
-    private Train(String trainName, Timestamp time, String destination) {
+    public Train(String trainName, Timestamp time, String destination) {
         this.trainName = trainName;
         this.time = time;
         this.destination = destination;
@@ -25,18 +25,18 @@ public class Train {
         this.intermediateStationStorage.add(destination);
     }
 
-    private String getName() { return trainName; }
+    public String getName() { return trainName; }
 
-    private void addIntermediateStation(String intermediate) {
+    public void addIntermediateStation(String intermediate) {
         if(intermediateStationStorage.indexOf(intermediate) == -1) intermediateStationStorage.add(intermediate);
     }
-    private void deleteIntermediateStation(String intermediate) {
+    public void deleteIntermediateStation(String intermediate) {
         int interStationIndex = intermediateStationStorage.indexOf(intermediate);
         if(interStationIndex != -1) intermediateStationStorage.remove(interStationIndex);
     }
 
     // Returns time before arrival in ms or -1
-    private long timeTrainGoesTo(String target, Timestamp currentTime) {
+    public long timeTrainGoesTo(String target, Timestamp currentTime) {
         if( intermediateStationStorage.contains(target) && time.toLocalDateTime().isAfter(currentTime.toLocalDateTime()))
             return time.getTime() - currentTime.getTime();
         else return new Long(-1);
