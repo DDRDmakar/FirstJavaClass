@@ -1,6 +1,3 @@
-/**
- * Created by DDRDmakar on 2/15/17.
- */
 package TrainSchedule
 
 
@@ -97,20 +94,34 @@ class TrainScheduleTest extends GroovyTestCase {
 
         // Пустая строка означает, что на данную станцию поезда не идут.
 
-        assertEquals("Allegro", s.find_next_train_to("Первая", nowTimePlus()))
-        assertEquals("T815", s.find_next_train_to("Вторая", nowTimePlus()))
-        assertEquals("Allegro", s.find_next_train_to("Третья", nowTimePlus()))
-        assertEquals("Allegro", s.find_next_train_to("Четвёртая", nowTimePlus()))
-        assertEquals("T815", s.find_next_train_to("Пятая", nowTimePlus()))
-        assertEquals("Allegro", s.find_next_train_to("Шестая", nowTimePlus()))
-        assertEquals("Sapsan", s.find_next_train_to("Седьмая", nowTimePlus()))
-        assertEquals("", s.find_next_train_to("Восьмая", nowTimePlus()))
-        assertEquals("", s.find_next_train_to("Девятая", nowTimePlus()))
-        assertEquals("", s.find_next_train_to("Десятая", nowTimePlus()))
-        assertEquals("T815", s.find_next_train_to("Одиннадцатая", nowTimePlus()))
-        assertEquals("T815", s.find_next_train_to("Двенадцатая", nowTimePlus()))
-        assertEquals("Sapsan", s.find_next_train_to("Тринадцатая", nowTimePlus()))
-        assertEquals("Sapsan", s.find_next_train_to("Четырнадцатая", nowTimePlus()))
+        assertEquals("Allegro", s.findNextTrainTo("Первая", nowTimePlus()))
+        assertEquals("T815", s.findNextTrainTo("Вторая", nowTimePlus()))
+        assertEquals("Allegro", s.findNextTrainTo("Третья", nowTimePlus()))
+        assertEquals("Allegro", s.findNextTrainTo("Четвёртая", nowTimePlus()))
+        assertEquals("T815", s.findNextTrainTo("Пятая", nowTimePlus()))
+        assertEquals("Allegro", s.findNextTrainTo("Шестая", nowTimePlus()))
+        assertEquals("Sapsan", s.findNextTrainTo("Седьмая", nowTimePlus()))
+        boolean st1, st2, st3
+        try {
+            st1 = ! s.findNextTrainTo("Восьмая", nowTimePlus()).isEmpty()
+        }
+        catch(Throwable) {st1 = false}
+        try {
+            st2 = ! s.findNextTrainTo("Девятая", nowTimePlus()).isEmpty()
+        }
+        catch(Throwable) {st2 = false}
+        try {
+            st3 = ! s.findNextTrainTo("Десятая", nowTimePlus()).isEmpty()
+        }
+        catch(Throwable) {st3 = false}
+
+        assertEquals(false, st1)
+        assertEquals(false, st2)
+        assertEquals(false, st3)
+        assertEquals("T815", s.findNextTrainTo("Одиннадцатая", nowTimePlus()))
+        assertEquals("T815", s.findNextTrainTo("Двенадцатая", nowTimePlus()))
+        assertEquals("Sapsan", s.findNextTrainTo("Тринадцатая", nowTimePlus()))
+        assertEquals("Sapsan", s.findNextTrainTo("Четырнадцатая", nowTimePlus()))
 
         // println(s)
     }

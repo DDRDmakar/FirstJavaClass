@@ -1,67 +1,58 @@
 package TrainSchedule;
 
 import java.sql.Timestamp;
-import java.util.Vector;
-//import java.util.TreeMap;
-//import java.util.SortedMap;
-//import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.zip.DataFormatException;
 
-/**
- * Created by DDRDmakar on 2/15/17.
- */
-public class TrainSchedule {
+//=========================================
 
-    private Vector<Train> trainStorage;
+final public class TrainSchedule {
 
-    public TrainSchedule() { trainStorage = new Vector<Train>(); }
+    private Collection<Train> trainStorage;
 
-    private int findTrainIndex(String trainName) {
-
-        for(int i = 0; i < trainStorage.size(); ++i) {
-            if(trainStorage.get(i).getName().equals(trainName)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    public TrainSchedule() { trainStorage = new ArrayList<>(); }
 
     public void addTrain(String trainName, Timestamp departureTime, String destination) {
-        if(findTrainIndex(trainName) == -1) trainStorage.add(new Train(trainName, departureTime, destination));
+        if(trainStorage.contains(new Train(trainName))) throw new IllegalArgumentException();
+        else trainStorage.add(new Train(trainName, departureTime, destination));
     }
 
     public void deleteTrain(String trainName) {
-        int trainIndex = -1;
-        for(int i = 0; i < trainStorage.size(); ++i) {
-            if(trainStorage.get(i).getName().equals(trainName)) {
-                trainStorage.remove(i);
-                break;
-            }
-        }
+        if(trainStorage.contains(new Train(trainName))) trainStorage.remove(new Train(trainName));
+        else throw new IllegalArgumentException();
     }
 
     public void addIntermediateStation(String trainName, String station) {
-        int trainIndex = findTrainIndex(trainName);
-        if(trainIndex != -1) trainStorage.get(trainIndex).addIntermediateStation(station);
+        for(Train e:trainStorage) {
+            if(e.getName().equals(trainName)) e.addIntermediateStation(station);
+        }
     }
 
     public void deleteIntermediateStation(String trainName, String station) {
-        int trainIndex = findTrainIndex(trainName);
-        if(trainIndex != -1) trainStorage.get(trainIndex).deleteIntermediateStation(station);
+        for(Train e:trainStorage) {
+            if(e.getName().equals(trainName)) e.deleteIntermediateStation(station);
+        }
     }
 
-    public String find_next_train_to(String stationName, Timestamp currentTime) {
+    public String findNextTrainTo(String stationName, Timestamp currentTime) throws DataFormatException {
         long shortest_time = -1;
+        long timeBeforeArrival;
         String nextTrainName = "";
 
         for(Train e:trainStorage) {
-            long timeBeforeArrival = e.timeTrainGoesTo(stationName, currentTime);
+            try {
+                timeBeforeArrival = e.timeTrainGoesTo(stationName, currentTime);
+            }
+            catch(DataFormatException noway) { timeBeforeArrival = -1; }
+
             if(timeBeforeArrival != -1 && ( shortest_time > timeBeforeArrival || shortest_time == -1 )) {
                 shortest_time = timeBeforeArrival;
                 nextTrainName = e.getName();
             }
         }
-
-        return nextTrainName;
+        if(nextTrainName.isEmpty()) throw new DataFormatException();
+        else return nextTrainName;
     }
 
     public String toString() {
@@ -79,4 +70,6 @@ public class TrainSchedule {
     public int hashCode() {
         return trainStorage.hashCode() * 23;
     }
+
+    public boolean equals( Object other ) { return other instanceof TrainSchedule && other.hashCode() == this.hashCode(); }
 }

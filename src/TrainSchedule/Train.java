@@ -1,60 +1,59 @@
 package TrainSchedule;
 
-import java.util.Vector;
-//import java.time.LocalDateTime;
 import java.sql.Timestamp;
-//import java.time.ZoneOffset;
-//import java.time.Instant;
-//import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.zip.DataFormatException;
 
-/**
- * Created by DDRDmakar on 2/15/17.
- */
+//=========================================
 
-public class Train {
+final class Train {
     private String trainName;
     private Timestamp time;
-    private String destination;
-    private Vector<String> intermediateStationStorage;
+    private Collection<String> intermediateStationStorage;
 
-    public Train(String trainName, Timestamp time, String destination) {
+    Train(String trainName, Timestamp time, String destination) {
         this.trainName = trainName;
         this.time = time;
-        this.destination = destination;
-        this.intermediateStationStorage = new Vector<>();
+        this.intermediateStationStorage = new HashSet<>();
         this.intermediateStationStorage.add(destination);
     }
-
-    public String getName() { return trainName; }
-
-    public void addIntermediateStation(String intermediate) {
-        if(intermediateStationStorage.indexOf(intermediate) == -1) intermediateStationStorage.add(intermediate);
-    }
-    public void deleteIntermediateStation(String intermediate) {
-        int interStationIndex = intermediateStationStorage.indexOf(intermediate);
-        if(interStationIndex != -1) intermediateStationStorage.remove(interStationIndex);
+    Train(String trainName) {
+        this.trainName = trainName;
+        this.time = new Timestamp(System.currentTimeMillis());
+        this.intermediateStationStorage = new HashSet<>();
     }
 
-    // Returns time before arrival in ms or -1
-    public long timeTrainGoesTo(String target, Timestamp currentTime) {
-        if( intermediateStationStorage.contains(target) && time.toLocalDateTime().isAfter(currentTime.toLocalDateTime()))
+     String getName() { return trainName; }
+
+    void addIntermediateStation(String intermediate) throws IllegalArgumentException {
+        if(intermediateStationStorage.contains(intermediate)) throw new IllegalArgumentException();
+        else intermediateStationStorage.add(intermediate);
+    }
+    void deleteIntermediateStation(String intermediate) throws IllegalArgumentException {
+        if(intermediateStationStorage.contains(intermediate)) intermediateStationStorage.remove(intermediate);
+        else throw new IllegalArgumentException();
+    }
+
+    // Returns time before arrival in ms
+    long timeTrainGoesTo(String target, Timestamp currentTime) throws DataFormatException {
+        if(intermediateStationStorage.contains(target) && time.toLocalDateTime().isAfter(currentTime.toLocalDateTime()))
             return time.getTime() - currentTime.getTime();
-        else return new Long(-1);
+        else throw new DataFormatException();
     }
-
-    public Timestamp getTime() { return time; }
 
     public String toString() {
-        return "TRAIN( " + trainName + ": goes to " + destination + " at time: " + time + ", " + Integer.toString(intermediateStationStorage.size()) + " inter-station(s) )";
+        return "TRAIN( " + trainName + ": at time: " + time + ", " + Integer.toString(intermediateStationStorage.size()) + " inter-station(s) )";
     }
 
     public int hashCode() {
         int result = 7;
-        result += ( trainName.hashCode() + time.hashCode() + destination.hashCode() + intermediateStationStorage.hashCode() ) * 13;
+        result += ( trainName.hashCode() + time.hashCode() + intermediateStationStorage.hashCode() ) * 13;
         return result;
     }
 
-    public boolean equals( Train other ) {
-        return this.trainName.equals(other.getName());
+    public boolean equals( Object other ) {
+        return other instanceof Train && this.trainName.equals(((Train)other).getName());
+
     }
 }
