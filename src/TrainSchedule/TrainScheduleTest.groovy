@@ -17,9 +17,11 @@ class TrainScheduleTest extends GroovyTestCase {
         TrainSchedule s = new TrainSchedule()
 
         // Вывод содержимого - должен быть пустым
-        // println(s)
 
         // Заполнение содержимого
+        // addTrain Аргументы: Название поезда, время прибытия, конечная станция
+        // addIntermediateStation Аргументы: Название поезда, название промежуточной станции
+
         s.addTrain("Sapsan", nowTimePlus(9), "Брянск")
         s.addIntermediateStation("Sapsan", "Первая")
         s.addIntermediateStation("Sapsan", "Вторая")
@@ -68,12 +70,6 @@ class TrainScheduleTest extends GroovyTestCase {
         s.deleteTrain("Fastest")
 
 
-        /*
-        s.addTrain("T002", nowTimePlus(-4), "Berlin")
-        s.addTrain("T750", nowTimePlus(3), "Киев")
-        s.addTrain("T003", nowTimePlus(1.5), "Ростов")
-        s.addTrain("D9-000", nowTimePlus(), "Урюпинск")
-        */
 
         // Поиск ближайшего по времени поезда до определённой станции
 
@@ -92,7 +88,8 @@ class TrainScheduleTest extends GroovyTestCase {
         // На тринадцатую          --> Sapsan
         // На четырнадцатую        --> Sapsan
 
-        // Пустая строка означает, что на данную станцию поезда не идут.
+        // findNextTrainTo возвращает имя ближайшего по времени поезда на данную станцию
+        // Аргументы: Имя станци, текущее время
 
         assertEquals("Allegro", s.findNextTrainTo("Первая", nowTimePlus()))
         assertEquals("T815", s.findNextTrainTo("Вторая", nowTimePlus()))
@@ -122,7 +119,5 @@ class TrainScheduleTest extends GroovyTestCase {
         assertEquals("T815", s.findNextTrainTo("Двенадцатая", nowTimePlus()))
         assertEquals("Sapsan", s.findNextTrainTo("Тринадцатая", nowTimePlus()))
         assertEquals("Sapsan", s.findNextTrainTo("Четырнадцатая", nowTimePlus()))
-
-        // println(s)
     }
 }
