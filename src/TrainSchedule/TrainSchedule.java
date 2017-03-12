@@ -1,9 +1,7 @@
 package TrainSchedule;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.zip.DataFormatException;
+import java.util.*;
 
 //=========================================
 
@@ -12,47 +10,73 @@ final public class TrainSchedule {
     private Collection<Train> trainStorage;
 
     public TrainSchedule() { trainStorage = new ArrayList<>(); }
+    public TrainSchedule(ArrayList<Train> currentStorage) { trainStorage = currentStorage; }
+
+    public boolean contains(Train tempTrain) {
+        return trainStorage.contains(tempTrain);
+    }
+    public boolean contains(String tempTrainName) {
+        for(Train e:trainStorage) if(e.getName().equals(tempTrainName)) return true;
+        return false;
+    }
+
+    public void addTrain(Train currentTrain) {
+        if(currentTrain == null) throw new NullPointerException("Train cannot be null");
+        trainStorage.add(currentTrain);
+    }
 
     public void addTrain(String trainName, Timestamp departureTime, String destination) {
-        if(trainStorage.contains(new Train(trainName))) throw new IllegalArgumentException();
-        else trainStorage.add(new Train(trainName, departureTime, destination));
+        if(contains(new Train(trainName, departureTime, destination))) throw new IllegalArgumentException("Train already exists");
+        trainStorage.add(new Train(trainName, departureTime, destination));
+    }
+    public void addTrain(String trainName, Timestamp departureTime, String destination, Collection<String> interStations ) {
+        if(contains(new Train(trainName, departureTime, destination))) throw new IllegalArgumentException("Train already exists");
+        trainStorage.add(new Train(trainName, departureTime, destination, interStations));
     }
 
     public void deleteTrain(String trainName) {
-        if(trainStorage.contains(new Train(trainName))) trainStorage.remove(new Train(trainName));
-        else throw new IllegalArgumentException();
+        if(trainName == null) throw new NullPointerException("Train name cannot be null");
+        if(!contains(trainName)) throw new IllegalArgumentException("Train does not exist");
+
+        for(Train e:trainStorage) if(e.getName().equals(trainName)) {
+            trainStorage.remove(e);
+            return;
+        }
     }
 
     public void addIntermediateStation(String trainName, String station) {
+        if(trainName == null) throw new NullPointerException("Train name cannot be null");
+        if(station == null) throw new NullPointerException("Station name cannot be null");
+
         for(Train e:trainStorage) {
             if(e.getName().equals(trainName)) e.addIntermediateStation(station);
         }
     }
 
     public void deleteIntermediateStation(String trainName, String station) {
+        if(trainName == null) throw new NullPointerException("Train name cannot be null");
+        if(station == null) throw new NullPointerException("Station name cannot be null");
+
         for(Train e:trainStorage) {
             if(e.getName().equals(trainName)) e.deleteIntermediateStation(station);
         }
     }
 
-    public String findNextTrainTo(String stationName, Timestamp currentTime) throws DataFormatException {
-        long shortest_time = -1;
+    public String findNextTrainTo(String stationName, Timestamp currentTime) {
+        long shortestTime = -1;
         long timeBeforeArrival;
         String nextTrainName = "";
 
         for(Train e:trainStorage) {
-            try {
+            if(e.contains(stationName)) {
                 timeBeforeArrival = e.timeTrainGoesTo(stationName, currentTime);
-            }
-            catch(DataFormatException noway) { timeBeforeArrival = -1; }
-
-            if(timeBeforeArrival != -1 && ( shortest_time > timeBeforeArrival || shortest_time == -1 )) {
-                shortest_time = timeBeforeArrival;
-                nextTrainName = e.getName();
+                if(timeBeforeArrival >= 0 && (shortestTime > timeBeforeArrival || shortestTime == -1)) {
+                    shortestTime = timeBeforeArrival;
+                    nextTrainName = e.getName();
+                }
             }
         }
-        if(nextTrainName.isEmpty()) throw new DataFormatException();
-        else return nextTrainName;
+        return nextTrainName;
     }
 
     public String toString() {
@@ -67,9 +91,13 @@ final public class TrainSchedule {
         return result;
     }
 
-    public int hashCode() {
-        return trainStorage.hashCode() * 23;
-    }
+    public int hashCode() { return trainStorage.hashCode() * 23; }
 
-    public boolean equals( Object other ) { return other instanceof TrainSchedule && other.hashCode() == this.hashCode(); }
+    public boolean equals( Object other ) {
+        if(other == this) return true;
+        if(other == null || other.getClass() != this.getClass()) return false;
+        TrainSchedule that = (TrainSchedule) other;
+        for(Train e : trainStorage) if(!that.contains(e.getName())) return false;
+        return true;
+    }
 }

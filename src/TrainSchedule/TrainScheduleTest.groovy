@@ -1,18 +1,19 @@
 package TrainSchedule
 
+import junit.framework.Test
 
 import java.sql.Timestamp
 
 class TrainScheduleTest extends GroovyTestCase {
 
     // Get current date + some shift in time
-    static Timestamp nowTimePlus(double hoursShift = 0) {
+    private static Timestamp nowTimePlus(double hoursShift = 0) {
         return new Timestamp((System.currentTimeMillis() + 3600*hoursShift).toLong())
         // 3600000 = 1 hour
     }
 
+    @org.junit.Test
     void testShedule() {
-
         // Новый объект "расписание поездов"
         TrainSchedule s = new TrainSchedule()
 
@@ -98,23 +99,11 @@ class TrainScheduleTest extends GroovyTestCase {
         assertEquals("T815", s.findNextTrainTo("Пятая", nowTimePlus()))
         assertEquals("Allegro", s.findNextTrainTo("Шестая", nowTimePlus()))
         assertEquals("Sapsan", s.findNextTrainTo("Седьмая", nowTimePlus()))
-        boolean st1, st2, st3
-        try {
-            st1 = ! s.findNextTrainTo("Восьмая", nowTimePlus()).isEmpty()
-        }
-        catch(Throwable) {st1 = false}
-        try {
-            st2 = ! s.findNextTrainTo("Девятая", nowTimePlus()).isEmpty()
-        }
-        catch(Throwable) {st2 = false}
-        try {
-            st3 = ! s.findNextTrainTo("Десятая", nowTimePlus()).isEmpty()
-        }
-        catch(Throwable) {st3 = false}
 
-        assertEquals(false, st1)
-        assertEquals(false, st2)
-        assertEquals(false, st3)
+        assertEquals("", s.findNextTrainTo("Восьмая", nowTimePlus()))
+        assertEquals("", s.findNextTrainTo("Девятая", nowTimePlus()))
+        assertEquals("", s.findNextTrainTo("Десятая", nowTimePlus()))
+
         assertEquals("T815", s.findNextTrainTo("Одиннадцатая", nowTimePlus()))
         assertEquals("T815", s.findNextTrainTo("Двенадцатая", nowTimePlus()))
         assertEquals("Sapsan", s.findNextTrainTo("Тринадцатая", nowTimePlus()))
