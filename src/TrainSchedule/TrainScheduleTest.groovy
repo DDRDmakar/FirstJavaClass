@@ -61,12 +61,14 @@ class TrainScheduleTest extends GroovyTestCase {
 
         s.addTrain("T452", nowTimePlus(4), "Москва")
 
-        s.addTrain("T815", nowTimePlus(7), "Волгоград")
-        s.addIntermediateStation("T815", "Вторая")
-        s.addIntermediateStation("T815", "Третья")
-        s.addIntermediateStation("T815", "Пятая")
-        s.addIntermediateStation("T815", "Одиннадцатая")
-        s.addIntermediateStation("T815", "Двенадцатая")
+        Collection<String> T815stationStorage = new HashSet()
+        T815stationStorage.add("Вторая")
+        T815stationStorage.add("Третья")
+        T815stationStorage.add("Пятая")
+        T815stationStorage.add("Одиннадцатая")
+        T815stationStorage.add("Двенадцатая")
+        s.addTrain("T815", nowTimePlus(7), "Волгоград", T815stationStorage)
+        T815stationStorage.clear()
 
         s.deleteTrain("Fastest")
 
