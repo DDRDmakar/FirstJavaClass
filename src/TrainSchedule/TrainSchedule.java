@@ -69,6 +69,19 @@ final public class TrainSchedule {
     }
 
     /**
+     * Checks, if train with name tempTrainName goes to station tempStationName
+     * @param tempTrainName - name of train
+     * @param tempStationName - name of station, where this train should go
+     * @return true if this train goes to this station
+     *         false if not
+     */
+    public boolean contains(String tempTrainName, String tempStationName) {
+        for(Train e:trainStorage) if(e.getName().equals(tempTrainName))
+            return e.contains(tempStationName);
+        return false;
+    }
+
+    /**
      * Adds train to the schedule
      * @param currentTrain - train to add
      * @throws NullPointerException if currentTrain is null.
